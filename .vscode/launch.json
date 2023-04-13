@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "LambdaPrinters",
+            "request": "launch",
+            "mainClass": "com.example.lambdas.LambdaPrinters",
+            "projectName": "retries"
+        },
+        {
+            "type": "java",
             "name": "PalindromNumber",
             "request": "launch",
             "mainClass": "com.example.palindrome.PalindromNumber",
