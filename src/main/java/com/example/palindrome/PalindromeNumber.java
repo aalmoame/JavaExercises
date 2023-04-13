@@ -1,6 +1,6 @@
 package com.example.palindrome;
 
-public class PalindromNumber {
+public class PalindromeNumber {
 
     public static void main(String[] args) {
         System.out.println(isPalindrome(12345));
