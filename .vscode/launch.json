@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "PalindromNumber",
+            "request": "launch",
+            "mainClass": "com.example.palindrome.PalindromNumber",
+            "projectName": "retries"
+        },
+        {
+            "type": "java",
+            "name": "MathEqnSolver",
+            "request": "launch",
+            "mainClass": "com.example.math.MathEqnSolver",
+            "projectName": "retries"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
