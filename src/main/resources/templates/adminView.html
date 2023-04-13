@@ -1,0 +1,12 @@
+<html>
+    <head></head>
+    <body>
+    <table>
+        <th:block th:each="url : ${urls}">
+            <tr>
+                <td><a th:href="${url}" th:text="${#strings.substring(url,1)}"/></td>
+            </tr>
+        </th:block>
+    </table>
+    </body>
+</html>
