@@ -28,27 +28,14 @@ public class LambdaPrinters {
         //reverse sort list by names
         System.out.println("Sorted List:");
         List<Printer> sortedList = printers.stream()
-            .sorted(new Comparator<Printer>() {
-
-                @Override
-                public int compare(Printer arg0, Printer arg1) {
-                    return arg1.getName().compareTo(arg0.getName());
-                }
-            
-            })
+            .sorted((printer1, printer2) -> printer2.getName().compareTo(printer1.getName()))
             .peek(printer -> System.out.println(printer.getName()))
             .toList();
 
         //filter list by beginning with 'A' and less than 30 sps
         System.out.println("\n Filtered List");
         List<Printer> filteredList = printers.stream()
-            .filter(new Predicate<Printer>() {
-                @Override
-                public boolean test(Printer printer)
-                {
-                    return !printer.getName().startsWith("A") || printer.getSpeedPerSecond() >= 30;
-                }
-            })
+            .filter(printer -> !printer.getName().startsWith("A") || printer.getSpeedPerSecond() >= 30)
             .peek(printer -> System.out.println(printer.getName()))
             .toList();
 
@@ -60,6 +47,13 @@ public class LambdaPrinters {
             })
             .peek(printer -> System.out.println(printer.getName()))
             .toList();
+
+        Thread th = new Thread(() -> sort(printers));
+        try {
+            th.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }        
 
         //filter list by beggining with 'A' and less than 30 sps
         System.out.println("\n Filtered List Using Runnable");
@@ -108,6 +102,18 @@ public class LambdaPrinters {
         System.out.println("\n Collecting all laser printers faster than 20 sps");
         List<Printer> fastLaserPrinters = method2(printers, printer -> printer.getType().equals(Printer.Type.Laser) && printer.getSpeedPerSecond() > 20);
 
+    }
+
+    public static void sort(List<Printer> printers) {
+        printers.stream()
+            .sorted((printer1, printer2) -> printer2.getName().compareTo(printer1.getName()))
+            .peek(printer -> System.out.println(printer.getName()))
+    }
+
+    public static void filter(List<Printer> printers) {
+        printers.stream()
+            .filter(printer -> !printer.getName().startsWith("A") || printer.getSpeedPerSecond() >= 30)
+            .peek(printer -> System.out.println(printer.getName()))
     }
 
     public static void method1(List<Printer> printers, Consumer<Printer> printerConsumer) {
