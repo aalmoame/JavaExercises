@@ -1,6 +1,7 @@
 package com.example.lambdas;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -8,10 +9,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class LambdaPrinters {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         List<Printer> printers = new ArrayList<>();
 
         printers.add(new Printer("HP OfficeJet Pro", Printer.Type.ThreeDimensional, 50));
@@ -26,7 +28,7 @@ public class LambdaPrinters {
         printers.add(new Printer("Brother MFC-J6945DW", Printer.Type.DotMatrix, 30));
 
         //reverse sort list by names
-        System.out.println("Sorted List:");
+        System.out.println(" Sorted List:");
         List<Printer> sortedList = printers.stream()
             .sorted((printer1, printer2) -> printer2.getName().compareTo(printer1.getName()))
             .peek(printer -> System.out.println(printer.getName()))
@@ -39,49 +41,32 @@ public class LambdaPrinters {
             .peek(printer -> System.out.println(printer.getName()))
             .toList();
 
+        
+        Thread th1 = new Thread(() -> sort(printers));
+        Thread th2 = new Thread(() -> filter(printers));
+
         //reverse sort list by name using a lambda runnable
-        System.out.println("\n Sorted List Using Runnable");
-        List<Printer> sortedListUsingRunnable = printers.stream()
-            .sorted((printer0, printer1) -> {
-                return printer1.getName().compareTo(printer0.getName()); 
-            })
-            .peek(printer -> System.out.println(printer.getName()))
-            .toList();
+        th1.start();
+        th1.join();
 
-        Thread th = new Thread(() -> sort(printers));
-        try {
-            th.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }        
-
-        //filter list by beggining with 'A' and less than 30 sps
-        System.out.println("\n Filtered List Using Runnable");
-        List<Printer> filteredListUsingRunnable = printers.stream()
-            .filter(printer -> !printer.getName().startsWith("A") || printer.getSpeedPerSecond() >= 30)
-            .peek(printer -> System.out.println(printer.getName()))
-            .toList();
-
+        //filter list using a lambda runnable
+        th2.start();
+        th2.join();
         
         //collecting disting speed per second
         System.out.println("\n Distinct Speeds");
-        Set<Integer> speeds = new HashSet<>(printers.size());
-        printers.stream().filter(printer -> speeds.add(printer.getSpeedPerSecond())).collect(Collectors.toList());
-        List<Integer> distinctSpeeds = new ArrayList<>(speeds);
+        Set<Integer> distinctSpeeds = printers.stream().map(Printer::getSpeedPerSecond).distinct().collect(Collectors.toSet());
         System.out.println(distinctSpeeds);
 
         //sort by Type:
         System.out.println("\n Sorted List by Type");
         List<Printer> sortedListByType = printers.stream()
-        .sorted((printer0, printer1) -> {
-            return printer0.getType().toString().compareTo(printer1.getType().toString()); 
-        })
         .peek(printer -> System.out.println("Name: " + printer.getName() + ", Type: " + printer.getType()))
         .toList();
 
         //Top 3 elements from list sorted by type
         System.out.println("\n Top 3 Elements in List Sorted by Type");
-        List<Printer> top3List = sortedListByType.subList(0, 3);
+        List<Printer> top3List = sortedListByType.stream().limit(3).toList();
         top3List.forEach(printer -> System.out.println("Name: " + printer.getName() + ", Type: " + printer.getType()));
 
         //Finding the Fastest printer
@@ -105,15 +90,19 @@ public class LambdaPrinters {
     }
 
     public static void sort(List<Printer> printers) {
+        System.out.println("\n Sorted List Using Runnable");
         printers.stream()
             .sorted((printer1, printer2) -> printer2.getName().compareTo(printer1.getName()))
             .peek(printer -> System.out.println(printer.getName()))
+            .toList();
     }
 
     public static void filter(List<Printer> printers) {
+        System.out.println("\n Filtered List Using Runnable");
         printers.stream()
             .filter(printer -> !printer.getName().startsWith("A") || printer.getSpeedPerSecond() >= 30)
             .peek(printer -> System.out.println(printer.getName()))
+            .toList();
     }
 
     public static void method1(List<Printer> printers, Consumer<Printer> printerConsumer) {
