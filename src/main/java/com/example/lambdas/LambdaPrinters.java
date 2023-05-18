@@ -27,7 +27,6 @@ public class LambdaPrinters {
         printers.add(new Printer("Canon ImageClass LBP236dw", Printer.Type.ThreeDimensional, 55));
         printers.add(new Printer("Brother MFC-J6945DW", Printer.Type.DotMatrix, 30));
 
-        //reverse sort list by names
         System.out.println(" Sorted List:");
         List<Printer> sortedList = printers.stream()
             .sorted((printer1, printer2) -> printer2.getName().compareTo(printer1.getName()))
@@ -40,7 +39,12 @@ public class LambdaPrinters {
             .filter(printer -> !printer.getName().startsWith("A") || printer.getSpeedPerSecond() >= 30)
             .peek(printer -> System.out.println(printer.getName()))
             .toList();
+        
 
+        Thread thread = new Thread(() -> System.out.println("\n I'm in a lambda runnable"));
+
+        thread.start();
+        thread.join();
         
         Thread th1 = new Thread(() -> sort(printers));
         Thread th2 = new Thread(() -> filter(printers));
@@ -62,6 +66,7 @@ public class LambdaPrinters {
         System.out.println("\n Sorted List by Type");
         List<Printer> sortedListByType = printers.stream()
         .peek(printer -> System.out.println("Name: " + printer.getName() + ", Type: " + printer.getType()))
+        .peek(System.out::println)
         .toList();
 
         //Top 3 elements from list sorted by type
@@ -77,16 +82,30 @@ public class LambdaPrinters {
 
         //Using method1 with consumer to find canon printers
         System.out.println("\n Finding all Canon Printers");
-        method1(printers, printer -> {
-            if(printer.getName().startsWith("Canon")) {
-                System.out.println("Name: " + printer.getName() + ", Type: " + printer.getType());
-            }
-        });
+        method1(printers, (printer) -> System.out.println(printer.getType().toString()));
 
         //using method2 with predicate to filter out non laser printers slower than 20 sps
         System.out.println("\n Collecting all laser printers faster than 20 sps");
         List<Printer> fastLaserPrinters = method2(printers, printer -> printer.getType().equals(Printer.Type.Laser) && printer.getSpeedPerSecond() > 20);
 
+
+
+        System.out.println("\n Converting printer names to upper case");
+        // printers.replaceAll(printer -> new Printer(printer.getName().toUpperCase(), printer.getType(), printer.getSpeedPerSecond()));
+        
+        printers.stream().map(printer -> {
+            return new Printer(printer.getName().toUpperCase(), printer.getType(), printer.getSpeedPerSecond());
+        }).peek(printer -> System.out.println("Name: " + printer.getName() + ", Speed: " + printer.getSpeedPerSecond()));
+        
+        System.out.println("\n Removing Epson Printers");
+        printers.removeIf(printer -> printer.getName().startsWith("EPSON"));
+        printers.forEach(printer -> System.out.println("Name: " + printer.getName() + ", Speed: " + printer.getSpeedPerSecond()));
+
+        System.out.println("\n Removing Slowest Printer");
+        printers.stream().min(Comparator.comparing(Printer::getSpeedPerSecond)).ifPresent(printer -> printers.remove(printer));
+        printers.forEach(printer -> System.out.println("Name: " + printer.getName() + ", Speed: " + printer.getSpeedPerSecond()));
+
+        // printers.stream().map(Printer::getType).filter(printerType -> printerType.equals(Printer.Type.LED))
     }
 
     public static void sort(List<Printer> printers) {

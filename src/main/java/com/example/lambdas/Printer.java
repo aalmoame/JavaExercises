@@ -23,6 +23,10 @@ public class Printer {
         return this.speedPerSecond;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     enum Type {
         Laser,
         ThreeDimensional,

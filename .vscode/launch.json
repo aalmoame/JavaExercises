@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "DownloadImages",
+            "request": "launch",
+            "mainClass": "com.example.compl_futures.DownloadImages",
+            "projectName": "retries"
+        },
+        {
+            "type": "java",
             "name": "LambdaPrinters",
             "request": "launch",
             "mainClass": "com.example.lambdas.LambdaPrinters",
